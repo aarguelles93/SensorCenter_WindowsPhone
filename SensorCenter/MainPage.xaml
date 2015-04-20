@@ -1,0 +1,84 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="SensorCenter.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait"  Orientation="Portrait"
+    shell:SystemTray.IsVisible="False">
+
+    <!--LayoutRoot es la cuadrícula raíz donde se coloca todo el contenido de la página-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+
+        <!-- NOTA PARA LA TRADUCCIÓN:
+            Para traducir las cadenas mostradas, copia sus valores a las claves con el nombre
+            correspondiente en el archivo de recursos del idioma neutro (AppResources.resx) de la aplicación y
+            reemplaza el valor de texto codificado de forma rígida entre las comillas de los atributos
+            con la cláusula de enlace cuya ruta de acceso apunte a ese nombre de cadena.
+
+            Por ejemplo:
+
+                Text="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"
+
+            Este enlace apunta al recurso de cadena de la plantilla denominado "ApplicationTitle".
+
+            Al agregar idiomas admitidos en la pestaña Propiedades del proyecto se creará un
+            nuevo archivo resx por idioma que puede contener los valores traducidos de las
+            cadenas de la interfaz de usuario. El enlace de estos ejemplos hará que el valor de los atributos
+            se tome del archivo .resx correspondiente al valor de
+            CurrentUICulture de la aplicación en tiempo de ejecución.
+         -->
+
+        <!--Control Panorama-->
+        <phone:Panorama x:Name="panorama" Title="SensorCenter" SelectionChanged="Panorama_SelectionChanged">
+            <phone:Panorama.Background>
+                <ImageBrush ImageSource="/SensorCenter;component/Assets/PanoramaBackground.jpg"/>
+            </phone:Panorama.Background>
+
+            <!--Elemento Panorama uno-->
+            <phone:PanoramaItem Header="first item">
+                <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+                    <StackPanel>                        
+                        <TextBlock x:Name="LatitudeTextBlock" Margin="20,20,20,0" Text="Latitud: "/>
+                        <TextBlock x:Name="LongitudeTextBlock" Margin="20,20,20,0" Text="Longitud: "/>
+                        <TextBlock x:Name="StatusTextBlock" Margin="20,20,20,0" Text="Status: "/> 
+                    </StackPanel>
+                </Grid>
+            </phone:PanoramaItem>
+
+            <!--Elemento Panorama dos-->
+            <phone:PanoramaItem Header="Acelerometro">
+                <Grid>
+                    <TextBlock Height="30" HorizontalAlignment="Left"  Margin="20,0,0,0" Name="xAccelerometerTB" Text="X: 1.0" VerticalAlignment="Top" Foreground="Red" FontSize="28" FontWeight="Bold"/>
+                    <TextBlock Height="30" HorizontalAlignment="Center"  Margin="0,0,0,0" Name="yAccelerometerTB" Text="Y: 1.0" VerticalAlignment="Top" Foreground="Green" FontSize="28" FontWeight="Bold"/>
+                    <TextBlock Height="30" HorizontalAlignment="Right"  Margin="0,0,20,0" Name="zAccelerometerTB" Text="Z: 1.0" VerticalAlignment="Top"  Foreground="Blue" FontSize="28" FontWeight="Bold"/>
+                    <Line x:Name="xAcceleratorLine" X1="240" Y1="220" X2="340" Y2="220" Stroke="Red" StrokeThickness="4"></Line>
+                    <Line x:Name="yAcceleratorLine" X1="240" Y1="220" X2="240" Y2="140" Stroke="Green" StrokeThickness="4"></Line>
+                    <Line x:Name="zAcceleratorLine" X1="240" Y1="220" X2="190" Y2="270" Stroke="Blue" StrokeThickness="4"></Line>
+                    <TextBlock Margin="20,0,20,15" Name="accelerometerStatusTB" Text="Status" Height="30" VerticalAlignment="Bottom" />
+                </Grid>
+            </phone:PanoramaItem>
+
+            <!--Elemento panorama tres-->
+            <phone:PanoramaItem Header="third item" Orientation="Horizontal">
+                <!--Panorama de doble ancho con marcadores de posición de imágenes grandes-->
+                <Grid>
+
+                </Grid>
+            </phone:PanoramaItem>
+        </phone:Panorama>
+    </Grid>
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar x:Name="AppBar1" IsVisible="True" IsMenuEnabled="True">
+            <shell:ApplicationBarIconButton x:Name="appBarButtonPlay" IconUri="/Assets/AppBarIcons/play.png" Text="Iniciar" Click="appBarButtonPlay_Click"/>
+            <shell:ApplicationBarIconButton x:Name="appBarButtonPause" IconUri="/Assets/AppBarIcons/pause.png" Text="Pausar" Click="appBarButtonPause_Click"/>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+</phone:PhoneApplicationPage>
