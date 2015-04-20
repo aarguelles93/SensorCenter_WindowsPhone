@@ -48,7 +48,7 @@
                     <StackPanel>                        
                         <TextBlock x:Name="LatitudeTextBlock" Margin="20,20,20,0" Text="Latitud: "/>
                         <TextBlock x:Name="LongitudeTextBlock" Margin="20,20,20,0" Text="Longitud: "/>
-                        <TextBlock x:Name="geoStatusTB" Margin="20,20,20,0" Text="Status: "/> 
+                        <TextBlock x:Name="geoStatusTB" Margin="20,20,20,0" Text="Estado: "/> 
                     </StackPanel>
                 </Grid>
             </phone:PanoramaItem>
@@ -62,15 +62,30 @@
                     <Line x:Name="xAcceleratorLine" X1="240" Y1="220" X2="340" Y2="220" Stroke="Red" StrokeThickness="4"></Line>
                     <Line x:Name="yAcceleratorLine" X1="240" Y1="220" X2="240" Y2="140" Stroke="Green" StrokeThickness="4"></Line>
                     <Line x:Name="zAcceleratorLine" X1="240" Y1="220" X2="190" Y2="270" Stroke="Blue" StrokeThickness="4"></Line>
-                    <TextBlock Margin="20,0,20,15" Name="accelerometerStatusTB" Text="Status" Height="30" VerticalAlignment="Bottom" />
+                    <TextBlock Margin="20,0,20,15" Name="accelerometerStatusTB" Text="Estado: " Height="30" VerticalAlignment="Bottom" />
                 </Grid>
             </phone:PanoramaItem>
 
             <!--Elemento panorama tres-->
-            <phone:PanoramaItem Header="Otros" Orientation="Horizontal">
+            <phone:PanoramaItem Header="Giroscopio" Orientation="Horizontal">
                 <!--Panorama de doble ancho con marcadores de posición de imágenes grandes-->
-                <Grid>
-
+                <Grid Margin="10,0">
+                    <StackPanel>
+                        <TextBlock Name="gyroStatusTB" Margin="10,0,10,0" Text="Estado: "  />
+                        <TextBlock Name="gyroTimeBetweenUpdatesTB" Margin="10,10,10,10" Text="Tiempo entre actualizaciones: "/>
+                        <TextBlock Margin="10,20,10,0" Text="Velocidad rotational actual (rads/sec)" />
+                        <Grid Margin="10,10,10,10">
+                            <TextBlock Height="30" HorizontalAlignment="Left" Name="gyroCurrentXTB" Text="X: 1.0" VerticalAlignment="Top" Foreground="Red" FontSize="28" FontWeight="Bold"/>
+                            <TextBlock Height="30" HorizontalAlignment="Center" Name="gyroCurrentYTB" Text="Y: 1.0" VerticalAlignment="Top" Foreground="Green" FontSize="28" FontWeight="Bold"/>
+                            <TextBlock Height="30" HorizontalAlignment="Right"  Name="gyroCurrentZTB" Text="Z: 1.0" VerticalAlignment="Top"  Foreground="Blue" FontSize="28" FontWeight="Bold"/>
+                        </Grid>
+                        <TextBlock Margin="10,20,10,0" Text="Rotación acumulativa (degrees)" />
+                        <Grid Margin="10,10,10,10">
+                            <TextBlock Height="30" HorizontalAlignment="Left" Name="gyroCumulativeXTB" Text="X: 1.0" VerticalAlignment="Top" Foreground="Red" FontSize="28" FontWeight="Bold"/>
+                            <TextBlock Height="30" HorizontalAlignment="Center" Name="gyroCumulativeYTB" Text="Y: 1.0" VerticalAlignment="Top" Foreground="Green" FontSize="28" FontWeight="Bold"/>
+                            <TextBlock Height="30" HorizontalAlignment="Right" Name="gyroCumulativeZTB" Text="Z: 1.0" VerticalAlignment="Top"  Foreground="Blue" FontSize="28" FontWeight="Bold"/>
+                        </Grid>
+                    </StackPanel>
                 </Grid>
             </phone:PanoramaItem>
         </phone:Panorama>

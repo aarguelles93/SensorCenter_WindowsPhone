@@ -14,6 +14,7 @@ using Windows.Devices.Geolocation;
 using Microsoft.Devices.Sensors;
 using Microsoft.Xna.Framework;
 using System.IO.IsolatedStorage;
+using System.Windows.Threading;
 
 namespace SensorCenter
 {
@@ -26,6 +27,15 @@ namespace SensorCenter
         Accelerometer accelerometer;
         Boolean accSuported;
         Boolean accActive = false;
+
+        Gyroscope gyroscope;
+        DispatcherTimer timer;
+        Boolean gyroSupported;
+        Boolean gyroActive = false;        
+        Vector3 currentRotationRate = Vector3.Zero;
+        Vector3 cumulativeRotation = Vector3.Zero;
+        DateTimeOffset lastUpdateTime = DateTimeOffset.MinValue;
+        
 
         // Constructor
         public MainPage()
@@ -47,20 +57,34 @@ namespace SensorCenter
                 accelerometerStatusTB.Text = "Acelerometro soportado";
                 accSuported = true;
             }
+
+            // Si el giroscopio no está disponible
+            if (!Gyroscope.IsSupported)
+            {
+                gyroStatusTB.Text = "Giroscopio no soportado.";
+                gyroSupported = false;
+            }
+            else
+            {
+                gyroStatusTB.Text = "Giroscopio soportado.";
+                gyroSupported = true;
+                timer = new DispatcherTimer();
+                timer.Interval = TimeSpan.FromMilliseconds(60);
+                timer.Tick += new EventHandler(Gyro_timer_Tick);
+            }
         }
 
         // Permiso del usuario de usar el sericio de ubicación
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
-            if (IsolatedStorageSettings.ApplicationSettings.Contains("LocationConsent"))
-            {
+            if (IsolatedStorageSettings.ApplicationSettings.Contains("LocationConsent") ) {
                 // User has opted in or out of Location                
                 return;
             }
             else
             {                
                 MessageBoxResult result =
-                    MessageBox.Show("This app accesses your phone's location. Is that ok?",
+                    MessageBox.Show("Esta aplicación necesita hacer uso de tu ubicación.¿Estás de acuerdo?",
                     "Location",
                     MessageBoxButton.OKCancel);
 
@@ -81,9 +105,14 @@ namespace SensorCenter
         {
             int currentIndex = panorama.SelectedIndex;
             switch (currentIndex)
-            {                
+            {   case 0:
+                    appBarButtonEnabler(true);
+                    break;
                 case 1:
                     appBarButtonEnabler(accSuported);
+                    break;
+                case 2:
+                    appBarButtonEnabler(gyroSupported);
                     break;
             }
         }
@@ -126,6 +155,16 @@ namespace SensorCenter
                         accActive = false;
                         accelerometer.Stop();
                         accelerometerStatusTB.Text = "Detenido.";
+                    }
+                    break;
+                case 2:
+                    if ((gyroscope != null) && gyroscope.IsDataValid && gyroActive)
+                    {
+                        // Detener el giroscopio
+                        gyroActive = false;
+                        gyroscope.Stop();
+                        timer.Stop();
+                        gyroStatusTB.Text = "Detenido";                        
                     }
                     break;
             }
@@ -174,6 +213,30 @@ namespace SensorCenter
                             accelerometerStatusTB.Text = "Error al inicializar";
                         }
                     }                    
+                    break;
+                case 2:                    
+                    if (gyroActive == false)
+                    {
+                        if (gyroscope == null)
+                        {
+                            gyroscope = new Gyroscope();
+                            gyroscope.TimeBetweenUpdates = TimeSpan.FromMilliseconds(20); // SE podría modificar el valor de espera
+                            gyroTimeBetweenUpdatesTB.Text = "Tiempo entre actualizaciones: " + gyroscope.TimeBetweenUpdates.TotalMilliseconds +"ms";
+                            gyroscope.CurrentValueChanged += new EventHandler<SensorReadingEventArgs<GyroscopeReading>>(gyroscope_CurrentValueChanged);
+                        }
+                        //Inicia giroscopio
+                        try
+                        {
+                            gyroActive = true;
+                            gyroStatusTB.Text = "Iniciando giroscopio.";
+                            gyroscope.Start();
+                            timer.Start();
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            gyroStatusTB.Text = "Error al iniciar.";
+                        }
+                    }
                     break;
             }
         }
@@ -227,10 +290,10 @@ namespace SensorCenter
         */
         private void accelerometer_CurrentValueChanged(object sender, SensorReadingEventArgs<AccelerometerReading> e)
         {
-            Dispatcher.BeginInvoke(() => UpdateUI(e.SensorReading));
+            Dispatcher.BeginInvoke(() => AccelerometerUpdateUI(e.SensorReading));
         }
 
-        private void UpdateUI(AccelerometerReading accelerometerReading)
+        private void AccelerometerUpdateUI(AccelerometerReading accelerometerReading)
         {
             accelerometerStatusTB.Text = "Obteniendo datos";
 
@@ -247,6 +310,55 @@ namespace SensorCenter
             zAcceleratorLine.Y2 = zAcceleratorLine.Y1 + acceleration.Z * 100;
 
         }
+
+        /*
+         * GYROSCOPE METHODS
+         */
+        void gyroscope_CurrentValueChanged(object sender, SensorReadingEventArgs<GyroscopeReading> e)
+        {
+            if (lastUpdateTime.Equals(DateTimeOffset.MinValue))
+            {
+                // If this is the first time CurrentValueChanged was raised,
+                // only update the lastUpdateTime variable.
+                lastUpdateTime = e.SensorReading.Timestamp;
+            }else
+            {
+                // Get the current rotation rate. This value is in 
+                // radians per second.
+                currentRotationRate = e.SensorReading.RotationRate;
+
+                // Subtract the previous timestamp from the current one
+                // to determine the time between readings
+                TimeSpan timeSinceLastUpdate = e.SensorReading.Timestamp - lastUpdateTime;
+
+                // Obtain the amount the device rotated since the last update
+                // by multiplying by the rotation rate by the time since the last update.
+                // (radians/second) * secondsSinceLastReading = radiansSinceLastReading
+                cumulativeRotation += currentRotationRate * (float)(timeSinceLastUpdate.TotalSeconds);
+
+                lastUpdateTime = e.SensorReading.Timestamp;
+            }
+        }
+
+        void Gyro_timer_Tick(object sender, EventArgs e)
+        {
+            if (gyroscope.IsDataValid)
+            {
+                gyroStatusTB.Text = "Recibiendo datos del giroscopio.";
+            }
+
+            gyroCurrentXTB.Text = currentRotationRate.X.ToString("0.000");
+            gyroCurrentYTB.Text = currentRotationRate.Y.ToString("0.000");
+            gyroCurrentZTB.Text = currentRotationRate.Z.ToString("0.000");
+
+            gyroCumulativeXTB.Text =
+              MathHelper.ToDegrees(cumulativeRotation.X).ToString("0.00");
+            gyroCumulativeYTB.Text =
+              MathHelper.ToDegrees(cumulativeRotation.Y).ToString("0.00");
+            gyroCumulativeZTB.Text =
+              MathHelper.ToDegrees(cumulativeRotation.Z).ToString("0.00");           
+        }
+
 
     }
 }
