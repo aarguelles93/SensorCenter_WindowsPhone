@@ -9,29 +9,14 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using SensorCenter.Resources;
-using SensorCenter.ViewModels;
 
 namespace SensorCenter
 {
     public partial class App : Application
     {
-        private static MainViewModel viewModel = null;
+        
 
-        /// <summary>
-        /// ViewModel estático que usan las vistas con el que se van a enlazar.
-        /// </summary>
-        /// <returns>Objeto MainViewModel.</returns>
-        public static MainViewModel ViewModel
-        {
-            get
-            {
-                // Retrasar la creación del modelo de vista hasta que sea necesario
-                if (viewModel == null)
-                    viewModel = new MainViewModel();
-
-                return viewModel;
-            }
-        }
+        
 
         /// <summary>
         /// Proporcionar acceso sencillo al marco raíz de la aplicación telefónica.
@@ -88,11 +73,7 @@ namespace SensorCenter
         // Este código no se ejecutará cuando la aplicación se inicie por primera vez
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
-            // Asegurarse de que el estado de la aplicación se restaura adecuadamente
-            if (!App.ViewModel.IsDataLoaded)
-            {
-                App.ViewModel.LoadData();
-            }
+            
         }
 
         // Código para ejecutar cuando la aplicación se desactiva (se envía a segundo plano)

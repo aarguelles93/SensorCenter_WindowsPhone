@@ -39,16 +39,16 @@
         <!--Control Panorama-->
         <phone:Panorama x:Name="panorama" Title="SensorCenter" SelectionChanged="Panorama_SelectionChanged">
             <phone:Panorama.Background>
-                <ImageBrush ImageSource="/SensorCenter;component/Assets/PanoramaBackground.jpg"/>
+                <ImageBrush ImageSource="/SensorCenter;component/Assets/PanoramaBackground.png"/>
             </phone:Panorama.Background>
 
             <!--Elemento Panorama uno-->
-            <phone:PanoramaItem Header="first item">
+            <phone:PanoramaItem Header="Geolocation">
                 <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
                     <StackPanel>                        
                         <TextBlock x:Name="LatitudeTextBlock" Margin="20,20,20,0" Text="Latitud: "/>
                         <TextBlock x:Name="LongitudeTextBlock" Margin="20,20,20,0" Text="Longitud: "/>
-                        <TextBlock x:Name="StatusTextBlock" Margin="20,20,20,0" Text="Status: "/> 
+                        <TextBlock x:Name="geoStatusTB" Margin="20,20,20,0" Text="Status: "/> 
                     </StackPanel>
                 </Grid>
             </phone:PanoramaItem>
@@ -67,7 +67,7 @@
             </phone:PanoramaItem>
 
             <!--Elemento panorama tres-->
-            <phone:PanoramaItem Header="third item" Orientation="Horizontal">
+            <phone:PanoramaItem Header="Otros" Orientation="Horizontal">
                 <!--Panorama de doble ancho con marcadores de posición de imágenes grandes-->
                 <Grid>
 
